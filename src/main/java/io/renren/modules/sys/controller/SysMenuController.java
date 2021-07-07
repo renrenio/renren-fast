@@ -20,7 +20,9 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -53,12 +55,18 @@ public class SysMenuController extends AbstractController {
 	@RequiresPermissions("sys:menu:list")
 	public List<SysMenuEntity> list(){
 		List<SysMenuEntity> menuList = sysMenuService.list();
-		for(SysMenuEntity sysMenuEntity : menuList){
-			SysMenuEntity parentMenuEntity = sysMenuService.getById(sysMenuEntity.getParentId());
-			if(parentMenuEntity != null){
-				sysMenuEntity.setParentName(parentMenuEntity.getName());
-			}
+		HashMap<Long, SysMenuEntity> menuMap = new HashMap<>(12);
+		for (SysMenuEntity s : menuList) {
+			menuMap.put(s.getMenuId(), s);
 		}
+		for (SysMenuEntity s : menuList) {
+			SysMenuEntity parent = menuMap.get(s.getParentId());
+			if (Objects.nonNull(parent)) {
+				s.setParentName(parent.getName());
+			}
+
+		}
+
 
 		return menuList;
 	}
