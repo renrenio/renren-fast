@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -80,6 +81,6 @@ public class SysMenuEntity implements Serializable {
 	private Boolean open;
 
 	@TableField(exist=false)
-	private List<?> list;
+	private List<SysMenuEntity> list=new ArrayList<>();
 
 }
