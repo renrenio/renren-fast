@@ -9,6 +9,7 @@
 package io.renren.modules.sys.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.renren.common.utils.Constant;
 import io.renren.common.utils.MapUtils;
@@ -20,8 +21,7 @@ import io.renren.modules.sys.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 @Service("sysMenuService")
@@ -61,12 +61,41 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuDao, SysMenuEntity> i
 	public List<SysMenuEntity> getUserMenuList(Long userId) {
 		//系统管理员，拥有最高权限
 		if(userId == Constant.SUPER_ADMIN){
-			return getAllMenuList(null);
+			return getMenuList(null);
 		}
 		
 		//用户菜单列表
 		List<Long> menuIdList = sysUserService.queryAllMenuId(userId);
-		return getAllMenuList(menuIdList);
+		return getMenuList(menuIdList);
+	}
+
+	/**
+	 * 获取拥有的菜单列表
+	 * @param menuIdList
+	 * @return
+	 */
+	private List<SysMenuEntity> getMenuList(List<Long> menuIdList) {
+		// 查询拥有的所有菜单
+		List<SysMenuEntity> menus = this.baseMapper.selectList(new QueryWrapper<SysMenuEntity>()
+				.in(Objects.nonNull(menuIdList), "menu_id", menuIdList).in("type", 0, 1));
+		// 将id和菜单绑定
+		HashMap<Long, SysMenuEntity> menuMap = new HashMap<>(12);
+		for (SysMenuEntity s : menus) {
+			menuMap.put(s.getMenuId(), s);
+		}
+		// 使用迭代器,组装菜单的层级关系
+		Iterator<SysMenuEntity> iterator = menus.iterator();
+		while (iterator.hasNext()) {
+			SysMenuEntity menu = iterator.next();
+			SysMenuEntity parent = menuMap.get(menu.getParentId());
+			if (Objects.nonNull(parent)) {
+				parent.getList().add(menu);
+				// 将这个菜单从当前节点移除
+				iterator.remove();
+			}
+		}
+
+		return menus;
 	}
 
 	@Override
