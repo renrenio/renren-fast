@@ -1,14 +1,15 @@
 /**
  * Copyright (c) 2016-2019 人人开源 All rights reserved.
- *
+ * <p>
  * https://www.renren.io
- *
+ * <p>
  * 版权所有，侵权必究！
  */
 
 package io.renren.common.validator;
 
 import io.renren.common.exception.RRException;
+import io.renren.common.utils.Constant;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -40,10 +41,14 @@ public class ValidatorUtils {
         Set<ConstraintViolation<Object>> constraintViolations = validator.validate(object, groups);
         if (!constraintViolations.isEmpty()) {
             StringBuilder msg = new StringBuilder();
-            for(ConstraintViolation<Object> constraint:  constraintViolations){
+            for (ConstraintViolation<Object> constraint : constraintViolations) {
                 msg.append(constraint.getMessage()).append("<br>");
             }
             throw new RRException(msg.toString());
         }
+    }
+
+    public static void validateEntity(Object object, Constant.CloudService type) {
+        validateEntity(object, type.getValidatorGroupClass());
     }
 }
