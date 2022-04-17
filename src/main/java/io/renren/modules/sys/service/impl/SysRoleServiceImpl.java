@@ -16,11 +16,11 @@ import io.renren.common.utils.Constant;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.modules.sys.dao.SysRoleDao;
+import io.renren.modules.sys.dao.SysUserDao;
 import io.renren.modules.sys.entity.SysRoleEntity;
 import io.renren.modules.sys.service.SysRoleMenuService;
 import io.renren.modules.sys.service.SysRoleService;
 import io.renren.modules.sys.service.SysUserRoleService;
-import io.renren.modules.sys.service.SysUserService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 	@Autowired
 	private SysRoleMenuService sysRoleMenuService;
 	@Autowired
-	private SysUserService sysUserService;
+	private SysUserDao sysUserDao;
     @Autowired
     private SysUserRoleService sysUserRoleService;
 
@@ -114,7 +114,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 		}
 		
 		//查询用户所拥有的菜单列表
-		List<Long> menuIdList = sysUserService.queryAllMenuId(role.getCreateUserId());
+		List<Long> menuIdList = sysUserDao.queryAllMenuId(role.getCreateUserId());
 		
 		//判断是否越权
 		if(!menuIdList.containsAll(role.getMenuIdList())){
