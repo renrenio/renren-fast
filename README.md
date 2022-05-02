@@ -1,3 +1,6 @@
+#### 为了项目的长远发展，renren-fast已整合到 【[renren-security](https://gitee.com/renrenio/renren-security)】里面，以后会在renren-security里面进行更新维护，感谢支持！ :smiley: 
+<br> 
+
 **项目说明** 
 - renren-fast是一个轻量级的，前后端分离的Java快速开发平台，能快速开发项目并交付【接私活利器】
 - 支持MySQL、Oracle、SQL Server、PostgreSQL等主流数据库
